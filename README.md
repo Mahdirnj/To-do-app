@@ -91,6 +91,6 @@ Framer Motion Documentation
 
 
 📫 Contact
-Your Name - @iMahdirn ( Telegram )
+Mahdi - @iMahdirn ( Telegram )
 
 Project Link: https://github.com/Mahdirnj/todoapp
