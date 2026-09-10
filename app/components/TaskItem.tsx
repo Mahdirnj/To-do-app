@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { format, isValid, parseISO, differenceInDays } from "date-fns"
-import { motion } from "framer-motion"
+import { motion, type Variants } from "framer-motion"
 import { Calendar, CheckCircle2, Edit2, Trash2 } from "lucide-react"
 import { PRESET_COLORS } from "./CategoryManager"
 import { translations, type Language } from "../lib/translations"
@@ -55,7 +55,7 @@ export default function TaskItem({ task, categories, onEditTask, onDeleteTask, l
     setIsEditing(false)
   }
 
-  const taskVariants = {
+  const taskVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,

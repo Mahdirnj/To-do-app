@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Plus } from "lucide-react"
 import TaskItem from "./components/TaskItem"
@@ -43,7 +43,6 @@ type SortOption = "none" | "daysAsc" | "daysDesc" | "alphaAsc" | "alphaDesc"
 
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([])
-  const [filteredTasks, setFilteredTasks] = useState<Task[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [filter, setFilter] = useState("all")
@@ -53,41 +52,28 @@ export default function Home() {
   const [language, setLanguage] = useState<Language>("en")
   const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setIsLoading(true)
-        const [tasksData, categoriesData] = await Promise.all([getAllTasks(), getAllCategories()])
-        setTasks(tasksData)
-        setCategories(categoriesData)
-      } catch (error) {
-        console.error("Error loading data:", error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    loadData()
+  const getDaysRemaining = useCallback((dateStr: string) => {
+    if (!dateStr) return null
+    const date = parseISO(dateStr)
+    if (!isValid(date)) return null
+    return differenceInDays(date, new Date())
   }, [])
 
-  useEffect(() => {
+  const filteredTasks = useMemo(() => {
     let filtered = [...tasks]
 
-    // Filter by status
     if (filter === "active") filtered = filtered.filter((task) => !task.completed)
     if (filter === "completed") filtered = filtered.filter((task) => task.completed)
 
-    // Filter by category
     if (selectedCategory) {
       filtered = filtered.filter((task) => task.category === selectedCategory)
     }
 
-    // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
       filtered = filtered.filter((task) => task.title.toLowerCase().includes(query))
     }
 
-    // Apply sorting
     switch (sortOption) {
       case "daysAsc":
         filtered.sort((a, b) => {
@@ -115,15 +101,24 @@ export default function Home() {
         break
     }
 
-    setFilteredTasks(filtered)
-  }, [tasks, filter, selectedCategory, searchQuery, sortOption])
+    return filtered
+  }, [filter, getDaysRemaining, searchQuery, selectedCategory, sortOption, tasks])
 
-  const getDaysRemaining = (dateStr: string) => {
-    if (!dateStr) return null
-    const date = parseISO(dateStr)
-    if (!isValid(date)) return null
-    return differenceInDays(date, new Date())
-  }
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setIsLoading(true)
+        const [tasksData, categoriesData] = await Promise.all([getAllTasks(), getAllCategories()])
+        setTasks(tasksData)
+        setCategories(categoriesData)
+      } catch (error) {
+        console.error("Error loading data:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    loadData()
+  }, [])
 
   const handleSearch = (query: string) => {
     setSearchQuery(query)
@@ -141,7 +136,10 @@ export default function Home() {
   const handleAddCategory = async (newCategory: Omit<Category, "id">) => {
     try {
       const addedCategory = await addCategory(newCategory)
-      setCategories((prevCategories) => [...prevCategories, addedCategory])
+      setCategories((prevCategories) => [
+        ...prevCategories,
+        { ...addedCategory, color: addedCategory.color as Category["color"] },
+      ])
     } catch (error) {
       console.error("Error adding category:", error)
     }

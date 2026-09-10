@@ -1,16 +1,22 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { motion } from "framer-motion"
 import { Sun, Moon } from "lucide-react"
 
 export default function ThemeToggle() {
-  const [isDark, setIsDark] = useState(false)
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    if (typeof window === "undefined") {
+      return false
+    }
 
-  useEffect(() => {
-    const isDarkMode = document.documentElement.classList.contains("dark")
-    setIsDark(isDarkMode)
-  }, [])
+    const savedTheme = localStorage.getItem("theme")
+    if (savedTheme) {
+      return savedTheme === "dark"
+    }
+
+    return document.documentElement.classList.contains("dark")
+  })
 
   const toggleTheme = () => {
     const newIsDark = !isDark

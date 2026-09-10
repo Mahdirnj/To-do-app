@@ -1,6 +1,5 @@
-import { useState, type React } from "react"
+import { useState, type ChangeEvent } from "react"
 import { getAllTasks, getAllCategories, addTask, addCategory } from "../lib/db"
-
 export default function DataManagement() {
   const [importStatus, setImportStatus] = useState("")
 
@@ -16,7 +15,7 @@ export default function DataManagement() {
     a.click()
   }
 
-  const importData = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const importData = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
       const reader = new FileReader()

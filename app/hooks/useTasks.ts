@@ -10,15 +10,30 @@ export interface Task {
 }
 
 export function useTasks() {
-  const [tasks, setTasks] = useState<Task[]>([])
-  const [categories, setCategories] = useState<string[]>([])
+  const [tasks, setTasks] = useState<Task[]>(() => {
+    if (typeof window === "undefined") {
+      return []
+    }
 
-  useEffect(() => {
-    const storedTasks = localStorage.getItem("tasks")
-    const storedCategories = localStorage.getItem("categories")
-    if (storedTasks) setTasks(JSON.parse(storedTasks))
-    if (storedCategories) setCategories(JSON.parse(storedCategories))
-  }, [])
+    try {
+      const storedTasks = localStorage.getItem("tasks")
+      return storedTasks ? (JSON.parse(storedTasks) as Task[]) : []
+    } catch {
+      return []
+    }
+  })
+  const [categories, setCategories] = useState<string[]>(() => {
+    if (typeof window === "undefined") {
+      return []
+    }
+
+    try {
+      const storedCategories = localStorage.getItem("categories")
+      return storedCategories ? (JSON.parse(storedCategories) as string[]) : []
+    } catch {
+      return []
+    }
+  })
 
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks))
