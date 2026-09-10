@@ -1,9 +1,5 @@
 import "./globals.css"
-import { Inter, Vazirmatn } from "next/font/google"
-import type React from "react" // Import React
-
-const inter = Inter({ subsets: ["latin"] })
-const vazirmatn = Vazirmatn({ subsets: ["arabic"] })
+import type { ReactNode } from "react"
 
 export const metadata = {
   title: "Todo App",
@@ -13,11 +9,11 @@ export const metadata = {
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: ReactNode
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} ${vazirmatn.variable}`}>{children}</body>
+      <body className="min-h-screen antialiased">{children}</body>
     </html>
   )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, type React } from "react"
+import { useState, type FormEvent } from "react"
 import { Plus, Edit2, Trash2, Check, X } from "lucide-react"
 import { translations, type Language } from "../lib/translations"
 
@@ -44,7 +44,7 @@ export default function CategoryManager({
   const [editingCategory, setEditingCategory] = useState<string | null>(null)
   const [editingColor, setEditingColor] = useState<keyof typeof PRESET_COLORS>("red")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (newCategoryName.trim()) {
       onAddCategory({

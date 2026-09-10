@@ -22,6 +22,7 @@ export const translations = {
     cancel: "Cancel",
     save: "Save",
     daysLeft: "days left",
+    dataManagement: "Data Management",
   },
   fa: {
     tasks: "وظایف",
@@ -46,6 +47,7 @@ export const translations = {
     cancel: "لغو",
     save: "ذخیره",
     daysLeft: "روز باقی‌مانده",
+    dataManagement: "مدیریت داده‌ها",
   },
 }
 
